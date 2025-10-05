@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#FF7A00"/>
+  
+  <!-- White Circle Background -->
+  <circle cx="256" cy="256" r="200" fill="white"/>
+  
+  <!-- Money Symbol -->
+  <path d="M256 120C310.692 120 356 165.308 356 220V292C356 346.692 310.692 392 256 392C201.308 392 156 346.692 156 292V220C156 165.308 201.308 120 256 120Z" fill="#FF7A00"/>
+  
+  <!-- Dollar Sign -->
+  <path d="M256 160V180M256 332V352M256 180C234.909 180 218 196.909 218 218C218 239.091 234.909 256 256 256M256 180C277.091 180 294 196.909 294 218M256 256C277.091 256 294 272.909 294 294C294 315.091 277.091 332 256 332M256 256C234.909 256 218 272.909 218 294" stroke="white" stroke-width="16" stroke-linecap="round"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="180" cy="180" r="8" fill="white" opacity="0.6"/>
+  <circle cx="332" cy="180" r="8" fill="white" opacity="0.6"/>
+  <circle cx="180" cy="332" r="8" fill="white" opacity="0.6"/>
+  <circle cx="332" cy="332" r="8" fill="white" opacity="0.6"/>
+</svg>
