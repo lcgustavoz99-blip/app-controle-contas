@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Minus, X, ChevronLeft, ChevronRight, Settings, Trash2, Edit3 } from 'lucide-react'
 import { storageService } from '@/lib/storage'
 import { DEFAULT_CATEGORIES } from '@/lib/constants'
@@ -13,13 +13,21 @@ export function RegisterScreen() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [note, setNote] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [showCalendar, setShowCalendar] = useState(false)
-  const [calendarDate, setCalendarDate] = useState(new Date())
+  const [calendarDate, setCalendarDate] = useState<Date | null>(null)
   const [showCategoryEditor, setShowCategoryEditor] = useState(false)
   const [customCategories, setCustomCategories] = useState<Category[]>([])
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [editingName, setEditingName] = useState('')
+
+  // Initialize dates on client side only
+  useEffect(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    setSelectedDate(today)
+    setCalendarDate(today)
+  }, [])
 
   // Ícones disponíveis para despesas
   const expenseIcons = [
@@ -101,7 +109,7 @@ export function RegisterScreen() {
   })
 
   const handleSubmit = () => {
-    if (!amount || !selectedCategory) return
+    if (!amount || !selectedCategory || !selectedDate) return
 
     const transaction: Transaction = {
       id: generateId(),
@@ -125,6 +133,7 @@ export function RegisterScreen() {
   }
 
   const navigateDay = (direction: 'prev' | 'next') => {
+    if (!selectedDate) return
     const newDate = new Date(selectedDate)
     if (direction === 'prev') {
       newDate.setDate(newDate.getDate() - 1)
@@ -135,6 +144,7 @@ export function RegisterScreen() {
   }
 
   const navigateCalendarMonth = (direction: 'prev' | 'next') => {
+    if (!calendarDate) return
     const newDate = new Date(calendarDate)
     if (direction === 'prev') {
       newDate.setMonth(newDate.getMonth() - 1)
@@ -145,21 +155,28 @@ export function RegisterScreen() {
   }
 
   const formatSelectedDate = () => {
-    return selectedDate.toLocaleDateString('pt-BR', {
+    if (!selectedDate) return ''
+    const options: Intl.DateTimeFormatOptions = {
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
-    })
+      year: 'numeric',
+      timeZone: 'America/Sao_Paulo'
+    }
+    return selectedDate.toLocaleDateString('pt-BR', options)
   }
 
   const formatCalendarMonth = () => {
-    return calendarDate.toLocaleDateString('pt-BR', {
+    if (!calendarDate) return ''
+    const options: Intl.DateTimeFormatOptions = {
       month: 'long',
-      year: 'numeric'
-    })
+      year: 'numeric',
+      timeZone: 'America/Sao_Paulo'
+    }
+    return calendarDate.toLocaleDateString('pt-BR', options)
   }
 
   const getDaysInMonth = () => {
+    if (!calendarDate) return []
     const year = calendarDate.getFullYear()
     const month = calendarDate.getMonth()
     const firstDay = new Date(year, month, 1)
@@ -183,13 +200,14 @@ export function RegisterScreen() {
   }
 
   const selectDate = (day: number) => {
+    if (!calendarDate) return
     const newDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), day)
     setSelectedDate(newDate)
     setShowCalendar(false)
   }
 
   const isSelectedDay = (day: number) => {
-    if (!day) return false
+    if (!day || !selectedDate || !calendarDate) return false
     const dayDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), day)
     return dayDate.toDateString() === selectedDate.toDateString()
   }
@@ -253,6 +271,11 @@ export function RegisterScreen() {
   }
 
   const availableIcons = transactionType === 'expense' ? expenseIcons : incomeIcons
+
+  // Don't render until dates are initialized
+  if (!selectedDate || !calendarDate) {
+    return <div className="p-4">Carregando...</div>
+  }
 
   return (
     <div className="p-4 space-y-6">
